@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-offset-4 col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+					<h1><center>{{ title }}</center></h1>
+
+						<form method="POST" action="">
+							{% csrf_token %}
+							{{ form|crispy }} 
+							<!-- crispy used to make the forms look better -->
+							<label class="control-label" for="num">Phone (Format 01*********)</label>
+							<input type="text" name="phoneNum" class="form-control" id="num" placeholder="{{ instance.phone }}">
+							<br>
+							<label class="control-label" for="num">Make phone number public:</label> 
+							<select name="showNum" class="form-control" id="show">
+							{% if instance.showPhone %}
+								<option selected="selected">Yes</option>
+								<option>No</option>
+							{% else %}
+								<option>Yes</option>
+								<option selected="selected">No</option>
+							{% endif %}
+							</select>
+
+							<br> <br>
+							<center>
+							<input type="submit" class="btn btn-success" value="Save Changes"/>
+							</center>
+						</form>
+
+    			</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "register_base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block body %}
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-offset-4 col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                  {% if loginPage %}
+                      <img class="img-responsive" src="/media/image/logo.png">
+                  {% endif %}
+					<h1><center>{{ title }}</center></h1>
+
+						<form method="POST" action="">
+							{% csrf_token %}
+
+							{{ form|crispy }}
+
+							<!-- crispy used to make the forms look better -->
+
+							<center>
+							<input type="submit" class="btn btn-success" value="{{ title }}"/>
+							</center>
+
+						</form>
+
+    			</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

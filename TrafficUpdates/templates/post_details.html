@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% load gravatar %}
+
+{% load traffic_tags %}
+
+{% block content %}
+<div >
+
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    <div class="thumbnail">
+      <div class="caption">
+        {% if object.image %}
+          <a href='{{ object.image.url }}'><img src='{{ object.image.url }}' class="img-responsive" style="" id="yo"></a>
+        {% endif %}
+      	<h2>{% if object.creator|gravatar_exists %}
+      <img class="image-responsive" src="{% gravatar_url object.creator.email 70 %}">
+    {% else %}
+      <img class="image-responsive" src="/media/image/default.jpg" style="height: 70px; width: 70px;">
+    {% endif %}<a href='/{{ object.creator.id }}/profile' style="">{{ object.creator.first_name }} {{ object.creator.last_name }}</a><!-- <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span> -->
+        {% if object.creator.info.level == 1 %}
+        <img class="image-responsive" src="/media/image/level1.png" style="height: 40px; width: 40px; margin-bottom: 10px;">
+        {% elif object.creator.info.level == 2 %}
+        <img class="image-responsive" src="/media/image/level2.png" style="height: 40px; width: 40px; margin-bottom: 10px;">
+        {% elif object.creator.info.level == 3 %}
+        <img class="image-responsive" src="/media/image/level3.png" style="height: 40px; width: 40px; margin-bottom: 10px;">
+        {% elif object.creator.info.level == 4 %}
+        <img class="image-responsive" src="/media/image/level4.png" style="height: 40px; width: 40px; margin-bottom: 10px;">
+        {% elif object.creator.info.level == 5 %}
+        <img class="image-responsive" src="/media/image/level5.png" style="height: 40px; width: 40px; margin-bottom: 10px;">
+        {% endif %}
+        </h2>
+        <h3>{{ object.content }} <small> <br> posted {{ object.post_time|timesince }} ago</small></h3>
+        {% ifequal request.user object.creator %}
+        <p><a href='/{{ object.id }}/delete' class="btn btn-danger" role="button">Delete</a></p>
+        {% endifequal %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <div class="col-sm-offset-2">
+        <h3>Comments</h3>
+      </div>
+<div class="row">
+  <div class="col-md-8 col-md-offset-2 ">
+    <div class="thumbnail">
+      <div class="caption">
+
+      	{% for comment in object.comment_set.all %}
+      	<div class="" style= "background-color: white">
+        <h4>
+        {% if comment.creator|gravatar_exists %}
+        <img class="image-responsive" src="{% gravatar_url comment.creator.email 50 %}">
+        {% else %}
+        <img class="image-responsive" src="/media/image/default.jpg" style="height: 50px; width: 50px;">
+        {% endif %}<a href='/{{ comment.creator.id }}/profile'>{{ comment.creator.first_name }} {{ comment.creator.last_name }}</a>
+          {% if comment.creator.info.level == 1 %}
+          <img class="image-responsive" src="/media/image/level1.png" style="height: 30px; width: 30px; margin-bottom: 10px;">
+          {% elif comment.creator.info.level == 2 %}
+          <img class="image-responsive" src="/media/image/level2.png" style="height: 30px; width: 30px; margin-bottom: 10px;">
+          {% elif comment.creator.info.level == 3 %}
+          <img class="image-responsive" src="/media/image/level3.png" style="height: 30px; width: 30px; margin-bottom: 10px;">
+          {% elif comment.creator.info.level == 4 %}
+          <img class="image-responsive" src="/media/image/level4.png" style="height: 30px; width: 30px; margin-bottom: 10px;">
+          {% elif comment.creator.info.level == 5 %}
+          <img class="image-responsive" src="/media/image/level5.png" style="height: 30px; width: 30px; margin-bottom: 10px;">
+          {% endif %}
+        </h4>
+        <h4>{{ comment.content }} <small> <br>{{ comment.comment_time|timesince }} ago</small></h4>
+        {% ifequal request.user comment.creator %}
+        <p><a href='{{comment.id}}/delete' class="btn btn-danger" role="button">Delete</a><a href='{{comment.id}}/like' class="btn btn-primary pull-right" role="button">Likes:{{comment.like_count}}</a></p>
+        {% endifequal %}
+        {% ifnotequal request.user comment.creator %}
+        <p><a href='{{comment.id}}/dislike' class="btn btn-danger" role="button">Dislike:{{comment.dislike_count}}</a><a href='{{comment.id}}/like' class="btn btn-primary pull-right" role="button">Likes:{{comment.like_count}}</a></p>
+        {% endifnotequal %}
+        <hr/>
+    	  </div>
+        {% endfor %}
+        <div class="container-fluid">
+
+          <div class="row">
+              <div class="col-md-12">
+                <form method="POST" action="">
+                  <div class="form-group">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <center>
+                      <button type="submit" class="btn btn-success">Submit</button>
+                    </center>
+                  </div>
+                </form>
+              </div>
+          </div>
+
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+{% endblock content %}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% load gravatar %}
+
+{% load traffic_tags %}
+
+{% block content %}
+
+
+<!-- <a href="tel:01711544469">Call</a> -->
+		{% for post in objects %}
+<!-- 		<div class="" style= "background-color: white"> -->
+			<div class="row" style= "">
+			  <div class="col-md-8 col-md-offset-2">
+			    <div class="thumbnail">
+			      <div class="caption">
+		{% if post.image %}
+
+			<a href='{{ post.image.url }}'><img src='{{ post.image.url }}' class="img-responsive" style="" id="pic"></a>
+
+		{% endif %}
+
+        <h4>{% if post.creator|gravatar_exists %}
+			<img class="image-responsive" src="{% gravatar_url post.creator.email 50 %}">
+		{% else %}
+			<img class="image-responsive" src="/media/image/default.jpg" style="height: 50px; width: 50px;">
+		{% endif %}
+		<a href='/{{ post.creator.id }}/profile'>{{ post.creator.first_name }} {{ post.creator.last_name }} </a> <!-- <small>(Level: {{post.creator.info.level}})</small> -->
+		{% if post.creator.info.level == 1 %}
+		<img class="image-responsive" src="/media/image/level1.png" style="height: 40px; width: 40px; margin-bottom: 15px;">
+		{% elif post.creator.info.level == 2 %}
+		<img class="image-responsive" src="/media/image/level2.png" style="height: 40px; width: 40px; margin-bottom: 15px;">
+		{% elif post.creator.info.level == 3 %}
+		<img class="image-responsive" src="/media/image/level3.png" style="height: 40px; width: 40px; margin-bottom: 15px;">
+		{% elif post.creator.info.level == 4 %}
+		<img class="image-responsive" src="/media/image/level4.png" style="height: 40px; width: 40px; margin-bottom: 15px;">
+		{% elif post.creator.info.level == 5 %}
+		<img class="image-responsive" src="/media/image/level5.png" style="height: 40px; width: 40px; margin-bottom: 15px;">
+		{% endif %}
+		</h4>
+        <h4>{{ post.content }} <small> <br>{{ post.post_time|timesince }} ago</small></h4>
+        {% ifequal request.user post.creator %}
+        <p><a href='/{{post.id}}/delete' class="btn btn-danger" role="button">Delete</a><a href='/details/{{post.id}}' class="btn btn-info pull-right" role="button">Comment</a><a href='/{{post.id}}/like' class="btn btn-primary pull-right" role="button" style="margin-right: 15px;">Likes:{{post.like_count}}</a></p>
+        {% endifequal %}
+
+        {% ifnotequal request.user post.creator %}
+        <p><a href='/{{post.id}}/dislike' class="btn btn-danger" role="button">Dislike:{{post.dislike_count}}</a><a href='/details/{{post.id}}' class="btn btn-info pull-right" role="button">Comment</a><a href='/{{post.id}}/like' class="btn btn-primary pull-right" role="button" style="margin-right: 15px;">Likes:{{post.like_count}}</a></p>
+        {% endifnotequal %}
+
+        		</div>
+					</div>
+				</div>
+			</div>
+        {% empty %}
+        <div class="alert alert-info">
+    	<h3>No recent posts!</h3>
+  			</div>
+        {% endfor %}
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-offset-3 col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+        					<h1><center>{{ title }}</center></h1>
+        					<form method="POST" action="" enctype="multipart/form-data">
+        						<div class="form-group">
+        							{% csrf_token %}
+        							{{ form|crispy }}
+        							 <input type="file" name="fileUp" accept="image/*" capture="camera"/>
+        							<center>
+        								<button type="submit" class="btn btn-success">{{title}}</button>
+        							</center>
+        						</div>
+        					</form>
+            			</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+{% endblock content %}

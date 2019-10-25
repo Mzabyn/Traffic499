@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{% block head_title %}TrafficUpdates{% endblock head_title %}</title>
+	{% load staticfiles %}
+	{% load static from staticfiles %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js"></script>
+	<link rel="stylesheet" href="{% static 'css/custom.css' %}">
+	<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+
+        <!-- Name -->
+        <div class="navbar-header">
+
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+			</button>
+
+            <a class="navbar-brand" href="/post">TrafficUpdates</a>
+        </div>
+
+		<!-- Items -->
+        <div class="collapse navbar-collapse" id="topNavBar">
+            <ul class="nav navbar-nav">
+                <li class="/post">
+					<a href="/post">
+						<span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp; Home</a></li>
+				<li class="">
+					<a href="/profile">
+						<span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp; Profile</a></li>
+				{% if user.is_superuser %}
+				<li class="">
+					<a href="/users">
+						<span class="glyphicon glyphicon-book" aria-hidden="true"></span>&nbsp; Users</a></li>
+				{% endif %}
+			</ul>
+
+			<ul class="nav navbar-nav navbar-right">
+	            <li>
+                    <a href="/mail">
+                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp; Invite
+
+                    </a>
+                </li>
+			     {% if not user.is_superuser %}
+				    {% if notification %} 
+	                <li>
+	                    <a href="/notification">
+	                        <span class="glyphicon glyphicon-book" aria-hidden="true" style="color:red;"></span>&nbsp; Notifications
+	                    </a>
+	                </li>
+	                {% else %}
+	               	<li>
+	                    <a href="/notification">
+	                        <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>&nbsp; Notifications
+	                    </a>
+	                </li> 
+	                {% endif %}
+                {% endif %}
+				<li>
+                    <a href="/logout">
+                        <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
+                    </a>
+                </li>
+			</ul>
+
+    	</div>
+	</div>
+</nav>
+
+	<style>
+		{% block style %}
+		{% endblock style %}
+	</style>
+</head>
+<body>
+	{% if messages %}
+	<!-- To show any messages if required like "Successfully Deleted" message -->
+<div class="container-fluid">
+	<div class="messages">
+			{% for message in messages %}
+			<div {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+				{% if "html_safe" in message.tags %}
+				<div class="alert alert-success">
+	  				<strong>{{ message|safe }}</strong>
+				</div>
+				{% else %}
+				<div class="alert alert-success alert-dismissible">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+					<strong>{{ message }}</strong>
+				</div>
+				{% endif %}
+			</div>
+			{% endfor %}
+	</div>
+</div>
+	{% endif %}
+<div class="container">
+{% block content %}
+	<h1>
+		This is working!
+	</h1>
+{% endblock content %}
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+TrafficUpdates/db.sqlite3
+TrafficUpdates/post/__pycache__/*
+TrafficUpdates/account/__pycache__/*
+TrafficUpdates/post/migrations/__pycache__/*
+TrafficUpdates/account/migrations/__pycache__/*
+TrafficUpdates/TrafficUpdates/__pycache__/*
+TrafficUpdates/media/post/*
+TrafficUpdates/templatetags/__pycache__/*

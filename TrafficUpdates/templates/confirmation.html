@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="row">
+        <h1><center>Delete Confirmation:</center></h1>
+        <div class="col-md-13">
+          <form method="POST" action="">
+            <div class="form-group">
+              {% csrf_token %}       
+              <h3><center>Are you sure you want to delete :</center></h3>
+              <h3><center>{{ instance }}</center></h3>
+              <br/>
+              <br/>
+              <div><center>
+                {% if isComment %}
+                <a href="/details/{{instance.post.id}}" class="btn btn-default">Cancel</a>
+                {% else %}
+                <a href="/create" class="btn btn-default">Cancel</a>
+                {% endif %}
+                <button type="submit" class="btn btn-warning">Confirm</button></center>
+              </div>
+            </div>
+          </form>   
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}

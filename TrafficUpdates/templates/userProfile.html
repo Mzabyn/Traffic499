@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load gravatar %}
+
+{% block content %}
+
+{% if exists %}
+<p align="center">
+    <img class="img-responsive" src="{% gravatar_url instance.email 300 %}">
+</p>
+{% else %}
+<p align="center">
+    <img class="img-responsive" src="/media/image/default.jpg">
+</p>
+{% endif %}
+<!-- <div class="table-responsive">
+  <table class="table">
+    <tr>
+        <td>First Name: </td>
+        <td>{{ request.user.first_name }}</td>
+    </tr>
+  </table>
+</div>
+ -->
+
+
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <div class="thumbnail">
+        <h3>Name: {{ instance.first_name }} {{ instance.last_name }}</h3>
+    </div>
+   </div> 
+</div>
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <div class="thumbnail">
+        <h3>Username: {{ instance.username }}</h3>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <div class="thumbnail">
+        <h3>Email: {{ instance.email }}</h3>
+    </div>
+  </div>
+</div>
+{% if instanceInfo.showPhone %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <div class="thumbnail">
+        <h3>Phone: {{ instanceInfo.phone }}</a></h3>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <div class="thumbnail">
+        <h3>Level: {{ instanceInfo.level }}</h3>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <div class="thumbnail">
+        <h3>Points: {{ instanceInfo.points }}</h3>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

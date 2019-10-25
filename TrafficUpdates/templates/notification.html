@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+{% load mathfilters %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-10">
+    <h1>Notifications     <form method='get' action='#' style="display:inline;">
+<!--     <a href='#' class="btn btn-default" role="button">Clear</a> -->
+    <input type="submit" value="Clear" name="Clear" role="button" class="btn btn-default pull-right" />
+    </form></h1>
+  </div>
+</div>
+  {% if posts.all or commentPost.all or comments.all or posts1.all or comments1.all %}
+  {% for object in posts %}
+  <div class="row">
+    <div class="col-md-10">
+      <div class="thumbnail">
+        <div class="caption">
+          <h3><span class="glyphicon glyphicon-unchecked" aria-hidden="true" style=""></span>{% for user in object.likers.all %}
+              {% if object.likers.all.count < 4 %}
+                    {% if not forloop.first %}
+                      {% if not forloop.last %}
+                              ,
+                      {% endif %}
+                    {% endif %}
+                    {% if forloop.last %}
+                      {% if not forloop.first %}
+                              and
+                      {% endif %}
+                    {% endif %}
+                    {{ user.last_name }}
+              {% else %}
+                    {% if forloop.counter == 1 %}
+                          {{ user.last_name }}
+                    {% elif forloop.counter == 2 %}
+                              , {{ user.last_name }}
+                    {% elif forloop.counter == 3 %}
+                            and {{ object.likers.all.count|add:"-2" }} others
+                    {% endif %}
+              {% endif %}
+                    {% endfor %} liked your post: <p style="color: #298FF2; display:inline;"> ({{ object.likers.all.count|mul:100 }} points earned for this post!) </p><br> <br>
+                    <b>{{ object.content }} </b>
+              <a href='/details/{{object.id}}' class="btn btn-primary pull-right" role="button">Details</a><h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endfor %}
+
+  {% for object in comments %}
+  <div class="row">
+    <div class="col-md-10">
+      <div class="thumbnail">
+        <div class="caption">
+          <h3><span class="glyphicon glyphicon-unchecked" aria-hidden="true" style=""></span>
+            {% for user in object.commentLikers.all %}
+              {% if object.commentLikers.all.count < 4 %}
+                    {% if not forloop.first %}
+                      {% if not forloop.last %}
+                              ,
+                      {% endif %}
+                    {% endif %}
+                    {% if forloop.last %}
+                      {% if not forloop.first %}
+                              and
+                      {% endif %}
+                    {% endif %}
+                    {{ user.last_name }}
+              {% else %}
+                    {% if forloop.counter == 1 %}
+                          {{ user.last_name }}
+                    {% elif forloop.counter == 2 %}
+                              , {{ user.last_name }}
+                    {% elif forloop.counter == 3 %}
+                            and {{ object.commentLikers.all.count|add:"-2" }} others
+                    {% endif %}
+              {% endif %}
+                    {% endfor %} liked your comment:<p style="color: #298FF2; display:inline;"> ({{ object.commentLikers.all.count|mul:50 }} points earned for this comment!)</p>
+                    <br> <br> <b> {{ object.content }} </b>
+              <a href='/details/{{object.post.id}}' class="btn btn-primary pull-right" role="button">Details</a><h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endfor %}
+
+  {% for object in posts1 %}
+  <div class="row">
+    <div class="col-md-10">
+      <div class="thumbnail">
+        <div class="caption">
+          <h3><span class="glyphicon glyphicon-unchecked" aria-hidden="true" style=""></span>{% for user in object.dislikers.all %}
+              {% if object.dislikers.all.count < 4 %}
+                    {% if not forloop.first %}
+                      {% if not forloop.last %}
+                              ,
+                      {% endif %}
+                    {% endif %}
+                    {% if forloop.last %}
+                      {% if not forloop.first %}
+                              and
+                      {% endif %}
+                    {% endif %}
+                    {{ user.last_name }}
+              {% else %}
+                    {% if forloop.counter == 1 %}
+                          {{ user.last_name }}
+                    {% elif forloop.counter == 2 %}
+                              , {{ user.last_name }}
+                    {% elif forloop.counter == 3 %}
+                            and {{ object.dislikers.all.count|add:"-2" }} others
+                    {% endif %}
+              {% endif %}
+                    {% endfor %} disliked your post:<p style="color: #E84313; display:inline;"> ({{ object.dislikers.all.count|mul:20 }} points lost for this post!) </p> <br> <br>
+                    <b>  {{ object.content }} </b>
+              <a href='/details/{{object.id}}' class="btn btn-primary pull-right" role="button">Details</a><h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endfor %}
+
+  {% for object in comments1 %}
+  <div class="row">
+    <div class="col-md-10">
+      <div class="thumbnail">
+        <div class="caption">
+          <h3><span class="glyphicon glyphicon-unchecked" aria-hidden="true" style=""></span>
+            {% for user in object.commentdisLikers.all %}
+              {% if object.commentdisLikers.all.count < 4 %}
+                    {% if not forloop.first %}
+                      {% if not forloop.last %}
+                              ,
+                      {% endif %}
+                    {% endif %}
+                    {% if forloop.last %}
+                      {% if not forloop.first %}
+                              and
+                      {% endif %}
+                    {% endif %}
+                    {{ user.last_name }}
+              {% else %}
+                    {% if forloop.counter == 1 %}
+                          {{ user.last_name }}
+                    {% elif forloop.counter == 2 %}
+                              , {{ user.last_name }}
+                    {% elif forloop.counter == 3 %}
+                            and {{ object.commentdisLikers.all.count|add:"-2" }} others
+                    {% endif %}
+              {% endif %}
+                    {% endfor %} disliked your comment:<p style="color: #E84313; display:inline;"> ({{ object.commentdisLikers.all.count|mul:10 }} points lost for this comment!)</p> <br> <br> <b> {{ object.content }} </b>
+              <a href='/details/{{object.post.id}}' class="btn btn-primary pull-right" role="button">Details</a><h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endfor %}
+
+  {% for object in commentPost %}
+  <div class="row">
+    <div class="col-md-10">
+      <div class="thumbnail">
+        <div class="caption">
+          <h3><span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>A new comment in : <br><br> <b>{{ object.content }} </b><a href='/details/{{object.id}}' class="btn btn-primary pull-right" role="button">Details</a><h3>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+
+{% else %}
+
+  <div class="row">
+    <div class="col-md-10">
+      <div class="alert alert-info">
+        <h3>No more notifications to show right now.</h3>  
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{% endblock content %}

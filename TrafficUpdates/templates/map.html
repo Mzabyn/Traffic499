@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Real-Time Traffic</h1>
+
+<div id="floating-panel">
+  <button onmousedown="toggleSwitch();" class="btn btn-primary" >Show Recent Posts</button>  <!-- onmousedown="heatLayer(); -->
+  <p class="pull-right"><input type="checkbox" name="my-checkbox"></p>
+<!--   <button onmousedown="heatLayerOff();" class="btn btn-primary pull-right" > Toggle Off</button> -->
+</div>
+<div id="googleMap" style="width:100%;height:480px;"></div>
+
+<script>
+  $("[name='my-checkbox']").bootstrapSwitch('onText',''); 
+  $("[name='my-checkbox']").bootstrapSwitch('offText','');
+  $("[name='my-checkbox']").bootstrapSwitch('offColor','danger');
+
+  function toggleSwitch(){
+    $("[name='my-checkbox']").bootstrapSwitch('toggleState'); 
+  }
+//   $("#c").on('click', function(e, data) {
+//     $("[name='my-checkbox']").bootstrapSwitch('toggleState');
+//     console.log(yo);
+// });
+// $("[name='my-checkbox']").on('switchChange', function (e, data) {
+//     alert(data.value);
+// });
+  $("[name='my-checkbox']").on('switchChange.bootstrapSwitch', function(e) {
+    console.log(e.target.checked);
+    if(e.target.checked==true){
+      heatLayer();
+    }
+    else{
+      heatLayerOff();
+    }
+});
+
+
+
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }
+var csrftoken = getCookie('csrftoken');
+// Setup ajax connections safetly
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+var gmarkers = [];
+var points;
+var data=[];
+var map, heatmap;
+function myMap() {
+var mapProp= {
+  center:new google.maps.LatLng(23.7611576,90.4108910),
+  zoom:12,
+};
+  map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+google.maps.event.addListener(map, 'click', function(event) {
+  placeMarker(map, event.latLng);
+});
+var trafficLayer = new google.maps.TrafficLayer();        
+trafficLayer.setMap(map);
+
+function placeMarker(map, location) {
+  var marker = new google.maps.Marker({
+    position: location,
+    map: map
+  });
+  gmarkers.push(marker);
+
+  var geocoder = new google.maps.Geocoder;
+  var infowindow = new google.maps.InfoWindow;
+
+  // geocoder.geocode({'location': location}, function(results, status) {
+  //         if (status === 'OK') {
+  //           if (results[0]) {
+  //             infowindow.setContent(results[0].formatted_address);
+  //             infowindow.open(map, marker);
+  //           } else {
+  //             window.alert('No results found');
+  //           }
+  //         } else {
+  //           window.alert('Geocoder failed due to: ' + status);
+  //         }
+  //       });
+
+  var infowindow = new google.maps.InfoWindow({
+    content: 'Latitude: ' + location.lat() +
+    '<br>Longitude: ' + location.lng()
+  });
+  infowindow.open(map,marker);
+  console.log(location.lat());
+
+  $.ajax({
+      url: '/post/',
+      type: 'POST',
+      data: {'location1':location.lat(),'location2':location.lng()},
+      success: function(data){
+        //code to open in new window comes here
+        window.location.href= '/create/'
+        console.log("Success")
+      }
+  });
+
+ }
+}
+
+function deleteMarkers() {
+    for(i=0; i<gmarkers.length; i++){
+        gmarkers[i].setMap(null);
+        console.log("Yo");
+    }
+    gmarkers = [];
+}
+function heatLayer() {
+      $.ajax({
+      url: '/posts/',
+      type: 'GET',
+      dataType: 'json',
+        success: function(data) {
+            points= data;
+            getPoints();
+        }
+  });
+}
+function getPoints(){
+  var i;
+  for (i = 0; i < points.length; i++) {
+    data[i] = new google.maps.LatLng(points[i].latitude, points[i].longitude);
+  }
+  heatMap();
+}
+function heatMap(){
+  if(!heatmap){
+  heatmap = new google.maps.visualization.HeatmapLayer({
+          data: data,
+          map: map,
+          radius: 12
+        });
+  // console.log("Start");
+  // console.log(heatmap.getMap());
+  // console.log("End");
+  heatmap.setMap(map);
+  // var gradient = [
+  //         'rgba(0, 255, 255, 0)',
+  //         'rgba(0, 255, 255, 1)',
+  //         'rgba(0, 191, 255, 1)',
+  //         'rgba(0, 127, 255, 1)',
+  //         'rgba(0, 63, 255, 1)',
+  //         'rgba(0, 0, 255, 1)',
+  //         'rgba(0, 0, 223, 1)',
+  //         'rgba(0, 0, 191, 1)',
+  //         'rgba(0, 0, 159, 1)',
+  //         'rgba(0, 0, 127, 1)',
+  //         'rgba(63, 0, 91, 1)',
+  //         'rgba(127, 0, 63, 1)',
+  //         'rgba(191, 0, 31, 1)',
+  //         'rgba(255, 0, 0, 1)'
+  //       ]
+
+  var gradient=[
+    'rgba(0, 0, 255, 0)',
+    // 'rgba(0, 0, 255, 1)',
+    // 'rgba(0, 191, 255, 1)',
+    // 'rgba(0, 127, 255, 1)',
+    // 'rgba(0,0,0,1)', // black 
+    // 'rgba(255,0,0,1)', // red
+    // 'rgba(255,0,0,1)',
+    // 'rgba(255,0,0,1)',
+    // 'rgba(255,0,0,1)',
+    'rgba(255,255,0,1)', // yellow
+    'rgba(255,255,0,1)',
+    'rgba(255,255,0,1)', // yellow
+    'rgba(255,255,0,1)',
+    'rgba(255,0,0,0.6)',
+    'rgba(255,0,0,0.6)',
+    'rgba(255,0,0,0.6)', // orange
+    // 'rgba(0,255,255,0.8)', // aqua
+    // 'rgba(0,255,255,0.8)',
+    // 'rgba(0,255,255,0.8)',
+
+  ]
+
+  heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+  }
+}
+
+function heatLayerOff() {
+  heatmap.setMap(null);
+  heatmap = undefined ;
+}
+
+</script>	
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB89f5EwkBXobHS1Arr0LauP8TP0RXy7Sk&libraries=visualization&callback=myMap"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script> -->
+
+{% endblock content %}

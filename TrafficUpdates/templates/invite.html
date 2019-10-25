@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-12">
+    <h1>{{ title }}</h1>
+  </div>  
+    <form class="navbar-form" role="search">
+    <div class="input-group add-on">
+      <input class="form-control user-search" placeholder="Enter email" name="q" value="{{ request.GET.q }}" id="srch-term" type="text" style="">
+      <div class="input-group-btn">
+        <button class="btn btn-default" type="submit">Send</button>
+      </div>
+    </div>
+  </form>
+</div>
+          <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                  <h1><center>Custom Email</center></h1>
+                  <form method="POST" action="">
+                    <div class="form-group">
+                      {% csrf_token %}
+                      
+                       <center><input class="form-control" type="text" placeholder="Enter email" name="email" style="width: 300px;" required=""></center> <br>
+                        <textarea class="form-control" name="msg" rows="5" placeholder="Enter message" required=""></textarea>
+                      <center>
+                        <br>
+                        <button type="submit" class="btn btn-success">{{title}}</button>
+                      </center>
+                    </div>
+                  </form>
+                  </div>
+                    </div>
+                </div>
+            </div>
+
+{% endblock content %}
